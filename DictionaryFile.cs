@@ -28,7 +28,15 @@ namespace Penguin.Collections
 
         public bool IsReadOnly => this.backingDictionary.IsReadOnly;
 
-        public string this[string key] { get => this.backingDictionary[key]; set => this.backingDictionary[key] = value; }
+        public string this[string key] { 
+            get => this.backingDictionary[key];
+            set
+            {
+                this.Remove(key);
+
+                this.Add(key, value);
+            }
+        }
 
         public void Add(string key, string value)
         {
