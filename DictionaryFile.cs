@@ -9,7 +9,7 @@ namespace Penguin.Collections
         {
             this.backingFile = new ListFile(path);
             this.backingDictionary = new Dictionary<string, string>();
-            
+
             foreach (string line in this.backingFile)
             {
                 this.backingDictionary.Add(line.Split('\t')[0], line.Split('\t')[1]);
@@ -28,7 +28,8 @@ namespace Penguin.Collections
 
         public bool IsReadOnly => this.backingDictionary.IsReadOnly;
 
-        public string this[string key] { 
+        public string this[string key]
+        {
             get => this.backingDictionary[key];
             set
             {
@@ -52,7 +53,7 @@ namespace Penguin.Collections
         public bool Remove(string key)
         {
             bool v = this.backingDictionary.Remove(key);
-            foreach(string line in this.backingFile)
+            foreach (string line in this.backingFile)
             {
                 if (line.StartsWith($"{key}\t"))
                 {

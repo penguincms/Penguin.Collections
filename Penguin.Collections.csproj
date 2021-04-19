@@ -9,4 +9,7 @@
     <Description>Not Available</Description>
   </PropertyGroup>
   <Import Project="Penguin.Projects.Shared\Penguin.Projects.Shared.csproj" />
+  <ItemGroup>
+    <PackageReference Include="Penguin.Extensions.String" Version="5.0.2-TACVG7B" />
+  </ItemGroup>
 </Project>
