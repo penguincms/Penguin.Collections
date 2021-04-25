@@ -3,13 +3,13 @@
     <TargetFramework>netstandard2.0</TargetFramework>
     <PackageProjectUrl>https://github.com/penguincms/Penguin.Collections</PackageProjectUrl>
     <DocumentationFile>Penguin.Collections.xml</DocumentationFile>
-    <Version>5.0.1</Version>
+    <Version>5.0.5</Version>
     <AssemblyName>Penguin.Collections</AssemblyName>
     <RootNamespace>Penguin.Collections</RootNamespace>
     <Description>Not Available</Description>
   </PropertyGroup>
   <Import Project="Penguin.Projects.Shared\Penguin.Projects.Shared.csproj" />
   <ItemGroup>
-    <PackageReference Include="Penguin.Extensions.String" Version="5.0.2-TADRIFB" />
+    <PackageReference Include="Penguin.Extensions.String" Version="5.0.4" />
   </ItemGroup>
 </Project>
