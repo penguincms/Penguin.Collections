@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
-    <PackageProjectUrl>https://github.com/penguincms/Penguin.Collections</PackageProjectUrl>
+    <PackageProjectUrl>https://github.com/PenguinCMS/Penguin.Collections</PackageProjectUrl>
     <DocumentationFile>Penguin.Collections.xml</DocumentationFile>
     <Version>5.0.5</Version>
     <AssemblyName>Penguin.Collections</AssemblyName>
@@ -10,6 +10,6 @@
   </PropertyGroup>
   <Import Project="Penguin.Projects.Shared\Penguin.Projects.Shared.csproj" />
   <ItemGroup>
-    <PackageReference Include="Penguin.Extensions.String" Version="5.0.4" />
+    <PackageReference Include="Penguin.Extensions.String" Version="5.0.6-TAHULSY" />
   </ItemGroup>
 </Project>
