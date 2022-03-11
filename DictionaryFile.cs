@@ -3,32 +3,9 @@ using System.Collections.Generic;
 
 namespace Penguin.Collections
 {
-    public class DictionaryFile : IDictionary<string, string>
+    public class DictionaryFile<TKey, TValue> : IDictionary<TKey, TValue>
     {
-        public DictionaryFile(string path)
-        {
-            this.backingFile = new ListFile(path);
-            this.backingDictionary = new Dictionary<string, string>();
-
-            foreach (string line in this.backingFile)
-            {
-                this.backingDictionary.Add(line.Split('\t')[0], line.Split('\t')[1]);
-            }
-        }
-
-        private readonly ListFile backingFile;
-
-        private readonly IDictionary<string, string> backingDictionary;
-
-        public ICollection<string> Keys => this.backingDictionary.Keys;
-
-        public ICollection<string> Values => this.backingDictionary.Values;
-
-        public int Count => this.backingDictionary.Count;
-
-        public bool IsReadOnly => this.backingDictionary.IsReadOnly;
-
-        public string this[string key]
+        public TValue this[TKey key]
         {
             get => this.backingDictionary[key];
             set
@@ -39,40 +16,50 @@ namespace Penguin.Collections
             }
         }
 
-        public void Add(string key, string value)
-        {
-            this.backingDictionary.Add(key, value);
-            this.backingFile.Add($"{key}\t{value}");
-        }
+        private readonly IDictionary<TKey, TValue> backingDictionary;
 
-        public bool ContainsKey(string key)
-        {
-            return this.backingDictionary.ContainsKey(key);
-        }
+        private readonly ListFile backingFile;
 
-        public bool Remove(string key)
+        private readonly SerializationSettings<TKey> KeySerialization;
+
+        private readonly SerializationSettings<TValue> ValueSerialization;
+
+        public int Count => this.backingDictionary.Count;
+
+        public bool IsReadOnly => this.backingDictionary.IsReadOnly;
+
+        ICollection<TKey> IDictionary<TKey, TValue>.Keys => backingDictionary.Keys;
+
+        ICollection<TValue> IDictionary<TKey, TValue>.Values => backingDictionary.Values;
+
+        public DictionaryFile(string path, SerializationSettings<TKey> keySerialization, SerializationSettings<TValue> valueSerialization, bool autoflush = true)
         {
-            bool v = this.backingDictionary.Remove(key);
+            this.KeySerialization = keySerialization;
+            this.ValueSerialization = valueSerialization;
+
+            this.backingFile = new ListFile(path, autoflush);
+            this.backingDictionary = new Dictionary<TKey, TValue>();
+
             foreach (string line in this.backingFile)
             {
-                if (line.StartsWith($"{key}\t"))
-                {
-                    this.backingFile.Remove(line);
-                    break;
-                }
+                this.backingDictionary.Add(KeySerialization.Deserialize(line.Split('\t')[0]), ValueSerialization.Deserialize(line.Split('\t')[1]));
             }
-            return v;
         }
 
-        public bool TryGetValue(string key, out string value)
+        public void Flush()
         {
-            return this.backingDictionary.TryGetValue(key, out value);
+            this.backingFile.Flush();
+        }
+        public void Add(TKey key, TValue value)
+        {
+            this.backingDictionary.Add(key, value);
+            this.backingFile.Add(GetRow(key, value));
         }
 
-        public void Add(KeyValuePair<string, string> item)
+        public void Add(KeyValuePair<TKey, TValue> item)
         {
             this.backingDictionary.Add(item);
-            this.backingFile.Add($"{item.Key}\t{item.Value}");
+            this.backingFile.Add(GetRow(item));
         }
 
         public void Clear()
@@ -81,24 +68,22 @@ namespace Penguin.Collections
             this.backingFile.Clear();
         }
 
-        public bool Contains(KeyValuePair<string, string> item)
+        public bool Contains(KeyValuePair<TKey, TValue> item)
         {
             return this.backingDictionary.Contains(item);
         }
 
-        public void CopyTo(KeyValuePair<string, string>[] array, int arrayIndex)
+        public bool ContainsKey(TKey key)
+        {
+            return this.backingDictionary.ContainsKey(key);
+        }
+
+        public void CopyTo(KeyValuePair<TKey, TValue>[] array, int arrayIndex)
         {
             this.backingDictionary.CopyTo(array, arrayIndex);
         }
 
-        public bool Remove(KeyValuePair<string, string> item)
-        {
-            bool v = this.backingDictionary.Remove(item);
-            this.backingFile.Remove($"{item.Key}\t{item.Value}");
-            return v;
-        }
-
-        public IEnumerator<KeyValuePair<string, string>> GetEnumerator()
+        public IEnumerator<KeyValuePair<TKey, TValue>> GetEnumerator()
         {
             return this.backingDictionary.GetEnumerator();
         }
@@ -106,6 +91,45 @@ namespace Penguin.Collections
         IEnumerator IEnumerable.GetEnumerator()
         {
             return ((IEnumerable)this.backingDictionary).GetEnumerator();
+        }
+
+        public bool Remove(TKey key)
+        {
+            bool v = this.backingDictionary.Remove(key);
+
+            string sKey = KeySerialization.Serialize(key);
+
+            foreach (string line in this.backingFile)
+            {
+                if (line.StartsWith($"{sKey}\t"))
+                {
+                    this.backingFile.Remove(line);
+                    break;
+                }
+            }
+            return v;
+        }
+
+        public bool Remove(KeyValuePair<TKey, TValue> item)
+        {
+            bool v = this.backingDictionary.Remove(item);
+            this.backingFile.Remove($"{item.Key}\t{item.Value}");
+            return v;
+        }
+
+        public bool TryGetValue(TKey key, out TValue value)
+        {
+            return this.backingDictionary.TryGetValue(key, out value);
+        }
+
+        private string GetRow(TKey key, TValue value)
+        {
+            return $"{KeySerialization.Serialize(key)}\t{ValueSerialization.Serialize(value)}";
+        }
+
+        private string GetRow(KeyValuePair<TKey, TValue> item)
+        {
+            return GetRow(item.Key, item.Value);
         }
     }
 }
