@@ -11,4 +11,5 @@
   <Import Project="Penguin.Projects.Shared\Penguin.Projects.Shared.csproj" />
   <ItemGroup>
     <PackageReference Include="Penguin.Extensions.String" Version="5.0.6-TAZCES9" />
+  </ItemGroup>
 </Project>
