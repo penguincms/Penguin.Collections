@@ -14,17 +14,17 @@ namespace Penguin.Collections
         {
             get
             {
-                if (this._backingList is null)
+                if (_backingList is null)
                 {
-                    if (!Directory.Exists(this.CachePath))
+                    if (!Directory.Exists(CachePath))
                     {
-                        Directory.CreateDirectory(this.CachePath);
+                        _ = Directory.CreateDirectory(CachePath);
                     }
 
-                    this._backingList = new ListFile(Path.Combine(this.CachePath, "Index.cache"));
+                    _backingList = new ListFile(Path.Combine(CachePath, "Index.cache"));
                 }
 
-                return this._backingList;
+                return _backingList;
             }
         }
 
@@ -32,39 +32,39 @@ namespace Penguin.Collections
 
         public CacheDirectory(string path, bool encodeKey = true)
         {
-            this.CachePath = path;
-            this.EncodeKey = encodeKey;
+            CachePath = path;
+            EncodeKey = encodeKey;
         }
 
         public void Add(object okey, string value)
         {
             string key = $"{okey}";
 
-            if (this.EncodeKey)
+            if (EncodeKey)
             {
                 key = key.ToBase64();
             }
 
-            int index = this.FindIndex(key);
+            int index = FindIndex(key);
 
             if (index == -1)
             {
-                index = this.FindIndex(string.Empty);
+                index = FindIndex(string.Empty);
             }
 
             if (index == -1)
             {
-                index = this.BackingList.Count;
+                index = BackingList.Count;
             }
 
-            this.BackingList.SetElement(index, key);
+            BackingList.SetElement(index, key);
 
-            File.WriteAllText(Path.Combine(this.CachePath, $"{index}.cache"), value);
+            File.WriteAllText(Path.Combine(CachePath, $"{index}.cache"), value);
         }
 
         public bool Remove(object okey)
         {
-            int index = this.FindIndex(okey);
+            int index = FindIndex(okey);
 
             if (index == -1)
             {
@@ -72,7 +72,7 @@ namespace Penguin.Collections
             }
             else
             {
-                this.BackingList.SetElement(index, string.Empty);
+                BackingList.SetElement(index, string.Empty);
 
                 return true;
             }
@@ -82,17 +82,17 @@ namespace Penguin.Collections
         {
             string key = $"{okey}";
 
-            if (this.EncodeKey)
+            if (EncodeKey)
             {
                 key = key.ToBase64();
             }
 
-            return this.BackingList.IndexOf(key);
+            return BackingList.IndexOf(key);
         }
 
         public bool TryGet(object okey, out string value)
         {
-            int index = this.FindIndex(okey);
+            int index = FindIndex(okey);
 
             if (index == -1)
             {
@@ -100,7 +100,7 @@ namespace Penguin.Collections
                 return false;
             }
 
-            string fName = Path.Combine(this.CachePath, $"{index}.cache");
+            string fName = Path.Combine(CachePath, $"{index}.cache");
 
             if (File.Exists(fName))
             {
@@ -114,6 +114,9 @@ namespace Penguin.Collections
             }
         }
 
-        public void Dispose() => ((IDisposable)this._backingList).Dispose();
+        public void Dispose()
+        {
+            ((IDisposable)_backingList).Dispose();
+        }
     }
 }

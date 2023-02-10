@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Penguin.Collections.SerializationSettings
 {
@@ -8,8 +6,8 @@ namespace Penguin.Collections.SerializationSettings
     {
         public DeserializationSettings(Func<string, T> deserializationFunc)
         {
-            this.Serialize = k => $"{k}";
-            this.Deserialize = deserializationFunc;
+            Serialize = k => $"{k}";
+            Deserialize = deserializationFunc;
         }
     }
 }

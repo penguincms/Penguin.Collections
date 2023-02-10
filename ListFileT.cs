@@ -12,23 +12,32 @@ namespace Penguin.Collections
             set => base[index] = SerializationSettings.Serialize(value);
         }
 
-        private SerializationSettings<T> SerializationSettings;
+        private readonly SerializationSettings<T> SerializationSettings;
 
         public ListFile(string path, SerializationSettings<T> serializationSettings) : base(path)
         {
-            this.SerializationSettings = serializationSettings;
+            SerializationSettings = serializationSettings;
         }
 
         public ListFile(string path, SerializationSettings<T> serializationSettings, bool autoFlush) : base(path, autoFlush)
         {
-            this.SerializationSettings = serializationSettings;
+            SerializationSettings = serializationSettings;
         }
 
-        public void Add(T item) => this.Add(this.SerializationSettings.Serialize(item));
+        public void Add(T item)
+        {
+            Add(SerializationSettings.Serialize(item));
+        }
 
-        public bool Contains(T item) => this.Contains(this.SerializationSettings.Serialize(item));
+        public bool Contains(T item)
+        {
+            return Contains(SerializationSettings.Serialize(item));
+        }
 
-        public void CopyTo(T[] array, int arrayIndex) => Array.Copy((this as IList<T>).ToArray(), 0, array, arrayIndex, this.Count);
+        public void CopyTo(T[] array, int arrayIndex)
+        {
+            Array.Copy((this as IList<T>).ToArray(), 0, array, arrayIndex, Count);
+        }
 
         IEnumerator<T> IEnumerable<T>.GetEnumerator()
         {
@@ -40,10 +49,19 @@ namespace Penguin.Collections
             }
         }
 
-        public int IndexOf(T item) => this.IndexOf(this.SerializationSettings.Serialize(item));
+        public int IndexOf(T item)
+        {
+            return IndexOf(SerializationSettings.Serialize(item));
+        }
 
-        public void Insert(int index, T item) => this.Insert(index, this.SerializationSettings.Serialize(item));
+        public void Insert(int index, T item)
+        {
+            Insert(index, SerializationSettings.Serialize(item));
+        }
 
-        public bool Remove(T item) => this.Remove(this.SerializationSettings.Serialize(item));
+        public bool Remove(T item)
+        {
+            return Remove(SerializationSettings.Serialize(item));
+        }
     }
 }

@@ -1,7 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-
-namespace Penguin.Collections
+﻿namespace Penguin.Collections
 {
     public class DictionaryFile : DictionaryFile<string>
     {

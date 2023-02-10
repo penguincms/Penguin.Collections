@@ -9,112 +9,127 @@ namespace Penguin.Collections
     {
         public string this[int index]
         {
-            get => ((IList<string>)this.backing)[index];
-            set => ((IList<string>)this.backing)[index] = value;
+            get => ((IList<string>)backing)[index];
+            set => ((IList<string>)backing)[index] = value;
         }
 
         private readonly bool AutoFlush = true;
 
-        private readonly List<string> backing = new List<string>();
+        private readonly List<string> backing = new();
 
         private readonly string Path;
 
         private bool disposedValue;
-        public int Count => ((ICollection<string>)this.backing).Count;
-        public bool Dirty { get; private set; } = false;
-        public bool IsReadOnly => ((ICollection<string>)this.backing).IsReadOnly;
+        public int Count => ((ICollection<string>)backing).Count;
+        public bool Dirty { get; private set; }
+        public bool IsReadOnly => ((ICollection<string>)backing).IsReadOnly;
 
         public ListFile(string path)
         {
-            this.Path = path;
+            Path = path;
 
             if (System.IO.File.Exists(path))
             {
-                this.backing = System.IO.File.ReadAllLines(path).ToList();
+                backing = System.IO.File.ReadAllLines(path).ToList();
             }
         }
 
         public ListFile(string path, bool autoFlush) : this(path)
         {
-            this.AutoFlush = autoFlush;
+            AutoFlush = autoFlush;
         }
 
         public void Add(string item)
         {
-            ((ICollection<string>)this.backing).Add(item);
+            ((ICollection<string>)backing).Add(item);
 
-            if (this.AutoFlush)
+            if (AutoFlush)
             {
-                System.IO.File.WriteAllLines(this.Path, this.backing);
+                System.IO.File.WriteAllLines(Path, backing);
             }
             else
             {
-                this.Dirty = true;
+                Dirty = true;
             }
         }
 
         public void Clear()
         {
-            ((ICollection<string>)this.backing).Clear();
+            ((ICollection<string>)backing).Clear();
 
-            if (this.AutoFlush)
+            if (AutoFlush)
             {
-                System.IO.File.Delete(this.Path);
+                System.IO.File.Delete(Path);
             }
             else
             {
-                this.Dirty = true;
+                Dirty = true;
             }
         }
 
-        public bool Contains(string item) => ((ICollection<string>)this.backing).Contains(item);
+        public bool Contains(string item)
+        {
+            return ((ICollection<string>)backing).Contains(item);
+        }
 
-        public void CopyTo(string[] array, int arrayIndex) => ((ICollection<string>)this.backing).CopyTo(array, arrayIndex);
+        public void CopyTo(string[] array, int arrayIndex)
+        {
+            ((ICollection<string>)backing).CopyTo(array, arrayIndex);
+        }
 
         public void Dispose()
         {
             // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
-            this.Dispose(disposing: true);
+            Dispose(disposing: true);
             GC.SuppressFinalize(this);
         }
 
         public void Flush()
         {
-            System.IO.File.WriteAllLines(this.Path, this.backing);
-            this.Dirty = false;
+            System.IO.File.WriteAllLines(Path, backing);
+            Dirty = false;
         }
 
-        public IEnumerator<string> GetEnumerator() => ((IEnumerable<string>)this.backing).GetEnumerator();
+        public IEnumerator<string> GetEnumerator()
+        {
+            return ((IEnumerable<string>)backing).GetEnumerator();
+        }
 
-        IEnumerator IEnumerable.GetEnumerator() => ((IEnumerable)this.backing).GetEnumerator();
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return ((IEnumerable)backing).GetEnumerator();
+        }
 
-        public int IndexOf(string item) => ((IList<string>)this.backing).IndexOf(item);
+        public int IndexOf(string item)
+        {
+            return ((IList<string>)backing).IndexOf(item);
+        }
 
         public void Insert(int index, string item)
         {
-            ((IList<string>)this.backing).Insert(index, item);
+            ((IList<string>)backing).Insert(index, item);
 
-            if (this.AutoFlush)
+            if (AutoFlush)
             {
-                System.IO.File.WriteAllLines(this.Path, this.backing);
+                System.IO.File.WriteAllLines(Path, backing);
             }
             else
             {
-                this.Dirty = true;
+                Dirty = true;
             }
         }
 
         public bool Remove(string item)
         {
-            bool v = ((ICollection<string>)this.backing).Remove(item);
+            bool v = ((ICollection<string>)backing).Remove(item);
 
-            if (this.AutoFlush)
+            if (AutoFlush)
             {
-                System.IO.File.WriteAllLines(this.Path, this.backing);
+                System.IO.File.WriteAllLines(Path, backing);
             }
             else
             {
-                this.Dirty = true;
+                Dirty = true;
             }
 
             return v;
@@ -122,80 +137,80 @@ namespace Penguin.Collections
 
         public void RemoveAt(int index)
         {
-            ((IList<string>)this.backing).RemoveAt(index);
+            ((IList<string>)backing).RemoveAt(index);
 
-            if (this.AutoFlush)
+            if (AutoFlush)
             {
-                System.IO.File.WriteAllLines(this.Path, this.backing);
+                System.IO.File.WriteAllLines(Path, backing);
             }
             else
             {
-                this.Dirty = true;
+                Dirty = true;
             }
         }
 
         public void SetElement(int index, string value)
         {
-            if (this.backing.Count <= index)
+            if (backing.Count <= index)
             {
-                while (this.backing.Count < index)
+                while (backing.Count < index)
                 {
-                    this.Add(string.Empty);
+                    Add(string.Empty);
 
-                    if (this.AutoFlush)
+                    if (AutoFlush)
                     {
-                        System.IO.File.AppendAllText(this.Path, System.Environment.NewLine);
+                        System.IO.File.AppendAllText(Path, System.Environment.NewLine);
                     }
                 }
 
-                this.Add(value);
+                Add(value);
 
-                if (this.AutoFlush)
+                if (AutoFlush)
                 {
-                    System.IO.File.AppendAllText(this.Path, value);
+                    System.IO.File.AppendAllText(Path, value);
                 }
                 else
                 {
-                    this.Dirty = true;
+                    Dirty = true;
                 }
             }
             else
             {
-                string eVal = this.backing[index];
+                string eVal = backing[index];
 
                 if (eVal == value)
                 {
                     return;
                 }
 
-                this.backing[index] = value;
+                backing[index] = value;
 
-                if (this.AutoFlush)
+                if (AutoFlush)
                 {
-                    System.IO.File.WriteAllLines(this.Path, this.backing);
+                    System.IO.File.WriteAllLines(Path, backing);
                 }
                 else
                 {
-                    this.Dirty = true;
+                    Dirty = true;
                 }
             }
         }
 
         protected virtual void Dispose(bool disposing)
         {
-            if (!this.disposedValue)
+            if (!disposedValue)
             {
                 if (disposing)
                 {
-                    if (!this.AutoFlush && this.Dirty)
+                    if (!AutoFlush && Dirty)
                     {
-                        this.Flush();
+                        Flush();
                     }
                 }
 
                 // TODO: free unmanaged resources (unmanaged objects) and override finalizer
                 // TODO: set large fields to null
-                this.disposedValue = true;
+                disposedValue = true;
             }
         }
 

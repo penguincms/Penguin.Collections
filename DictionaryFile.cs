@@ -8,12 +8,12 @@ namespace Penguin.Collections
     {
         public TValue this[TKey key]
         {
-            get => this.backingDictionary[key];
+            get => backingDictionary[key];
             set
             {
-                this.Remove(key);
+                _ = Remove(key);
 
-                this.Add(key, value);
+                Add(key, value);
             }
         }
 
@@ -25,9 +25,9 @@ namespace Penguin.Collections
 
         private readonly SerializationSettings<TValue> ValueSerialization;
 
-        public int Count => this.backingDictionary.Count;
+        public int Count => backingDictionary.Count;
 
-        public bool IsReadOnly => this.backingDictionary.IsReadOnly;
+        public bool IsReadOnly => backingDictionary.IsReadOnly;
 
         ICollection<TKey> IDictionary<TKey, TValue>.Keys => backingDictionary.Keys;
 
@@ -35,76 +35,77 @@ namespace Penguin.Collections
 
         public DictionaryFile(string path, SerializationSettings<TKey> keySerialization, SerializationSettings<TValue> valueSerialization, bool autoflush = true)
         {
-            this.KeySerialization = keySerialization;
-            this.ValueSerialization = valueSerialization;
+            KeySerialization = keySerialization;
+            ValueSerialization = valueSerialization;
 
-            this.backingFile = new ListFile(path, autoflush);
-            this.backingDictionary = new Dictionary<TKey, TValue>();
+            backingFile = new ListFile(path, autoflush);
+            backingDictionary = new Dictionary<TKey, TValue>();
 
-            foreach (string line in this.backingFile)
+            foreach (string line in backingFile)
             {
-                this.backingDictionary.Add(KeySerialization.Deserialize(line.Split('\t')[0]), ValueSerialization.Deserialize(line.Split('\t')[1]));
+                backingDictionary.Add(KeySerialization.Deserialize(line.Split('\t')[0]), ValueSerialization.Deserialize(line.Split('\t')[1]));
             }
         }
 
         public void Flush()
         {
-            this.backingFile.Flush();
+            backingFile.Flush();
         }
+
         public void Add(TKey key, TValue value)
         {
-            this.backingDictionary.Add(key, value);
-            this.backingFile.Add(GetRow(key, value));
+            backingDictionary.Add(key, value);
+            backingFile.Add(GetRow(key, value));
         }
 
         public void Add(KeyValuePair<TKey, TValue> item)
         {
-            this.backingDictionary.Add(item);
-            this.backingFile.Add(GetRow(item));
+            backingDictionary.Add(item);
+            backingFile.Add(GetRow(item));
         }
 
         public void Clear()
         {
-            this.backingDictionary.Clear();
-            this.backingFile.Clear();
+            backingDictionary.Clear();
+            backingFile.Clear();
         }
 
         public bool Contains(KeyValuePair<TKey, TValue> item)
         {
-            return this.backingDictionary.Contains(item);
+            return backingDictionary.Contains(item);
         }
 
         public bool ContainsKey(TKey key)
         {
-            return this.backingDictionary.ContainsKey(key);
+            return backingDictionary.ContainsKey(key);
         }
 
         public void CopyTo(KeyValuePair<TKey, TValue>[] array, int arrayIndex)
         {
-            this.backingDictionary.CopyTo(array, arrayIndex);
+            backingDictionary.CopyTo(array, arrayIndex);
         }
 
         public IEnumerator<KeyValuePair<TKey, TValue>> GetEnumerator()
         {
-            return this.backingDictionary.GetEnumerator();
+            return backingDictionary.GetEnumerator();
         }
 
         IEnumerator IEnumerable.GetEnumerator()
         {
-            return ((IEnumerable)this.backingDictionary).GetEnumerator();
+            return ((IEnumerable)backingDictionary).GetEnumerator();
         }
 
         public bool Remove(TKey key)
         {
-            bool v = this.backingDictionary.Remove(key);
+            bool v = backingDictionary.Remove(key);
 
             string sKey = KeySerialization.Serialize(key);
 
-            foreach (string line in this.backingFile)
+            foreach (string line in backingFile)
             {
                 if (line.StartsWith($"{sKey}\t"))
                 {
-                    this.backingFile.Remove(line);
+                    _ = backingFile.Remove(line);
                     break;
                 }
             }
@@ -113,14 +114,14 @@ namespace Penguin.Collections
 
         public bool Remove(KeyValuePair<TKey, TValue> item)
         {
-            bool v = this.backingDictionary.Remove(item);
-            this.backingFile.Remove($"{item.Key}\t{item.Value}");
+            bool v = backingDictionary.Remove(item);
+            _ = backingFile.Remove($"{item.Key}\t{item.Value}");
             return v;
         }
 
         public bool TryGetValue(TKey key, out TValue value)
         {
-            return this.backingDictionary.TryGetValue(key, out value);
+            return backingDictionary.TryGetValue(key, out value);
         }
 
         private string GetRow(TKey key, TValue value)
@@ -133,6 +134,9 @@ namespace Penguin.Collections
             return GetRow(item.Key, item.Value);
         }
 
-        public void Dispose() => ((IDisposable)this.backingFile).Dispose();
+        public void Dispose()
+        {
+            ((IDisposable)backingFile).Dispose();
+        }
     }
 }
