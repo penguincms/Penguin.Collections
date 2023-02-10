@@ -1,9 +1,10 @@
 ﻿using Penguin.Extensions.String;
+using System;
 using System.IO;
 
 namespace Penguin.Collections
 {
-    public class CacheDirectory
+    public class CacheDirectory : IDisposable
     {
         private ListFile _backingList;
 
@@ -112,5 +113,7 @@ namespace Penguin.Collections
                 return false;
             }
         }
+
+        public void Dispose() => ((IDisposable)this._backingList).Dispose();
     }
 }

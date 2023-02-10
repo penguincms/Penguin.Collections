@@ -1,9 +1,10 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 
 namespace Penguin.Collections
 {
-    public class DictionaryFile<TKey, TValue> : IDictionary<TKey, TValue>
+    public class DictionaryFile<TKey, TValue> : IDictionary<TKey, TValue>, IDisposable
     {
         public TValue this[TKey key]
         {
@@ -131,5 +132,7 @@ namespace Penguin.Collections
         {
             return GetRow(item.Key, item.Value);
         }
+
+        public void Dispose() => ((IDisposable)this.backingFile).Dispose();
     }
 }
