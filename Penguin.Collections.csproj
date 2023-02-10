@@ -1,12 +1,13 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFrameworks>netstandard2.0;netstandard2.1;net5.0</TargetFrameworks>
-    <PackageProjectUrl>https://github.com/PenguinCMS/Penguin.Collections</PackageProjectUrl>
+    <PackageProjectUrl>https://github.com/PenguinCms/Penguin.Collections</PackageProjectUrl>
     <DocumentationFile>Penguin.Collections.xml</DocumentationFile>
     <Version>5.0.5</Version>
     <AssemblyName>Penguin.Collections</AssemblyName>
     <RootNamespace>Penguin.Collections</RootNamespace>
     <Description>Not Available</Description>
+    <LangVersion>latest</LangVersion>
   </PropertyGroup>
   <Import Project="Penguin.Projects.Shared\Penguin.Projects.Shared.csproj" />
   <ItemGroup>
