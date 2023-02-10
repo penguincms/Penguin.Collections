@@ -20,8 +20,11 @@ namespace Penguin.Collections
         private readonly string Path;
 
         private bool disposedValue;
+
         public int Count => ((ICollection<string>)backing).Count;
+
         public bool Dirty { get; private set; }
+
         public bool IsReadOnly => ((ICollection<string>)backing).IsReadOnly;
 
         public ListFile(string path)
