@@ -12,6 +12,6 @@
   <Import Project="Penguin.Projects.Shared\Penguin.Projects.Shared.csproj" />
   <ItemGroup>
     <PackageReference Include="Loxifi.ListFile" Version="0.1.0" />
-    <PackageReference Include="Penguin.Extensions.String" Version="5.2.0" />
+    <PackageReference Include="Penguin.Extensions.String" Version="5.4.0" />
   </ItemGroup>
 </Project>
