@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFrameworks>netstandard2.1;net7.0</TargetFrameworks>
-    <PackageProjectUrl>https://github.com/PenguinCms/Penguin.Collections</PackageProjectUrl>
+    <PackageProjectUrl>https://github.com/PenguinCMS/Penguin.Collections</PackageProjectUrl>
     <DocumentationFile>Penguin.Collections.xml</DocumentationFile>
     <Version>5.0.5</Version>
     <AssemblyName>Penguin.Collections</AssemblyName>
@@ -12,6 +12,6 @@
   <Import Project="Penguin.Projects.Shared\Penguin.Projects.Shared.csproj" />
   <ItemGroup>
     <PackageReference Include="Loxifi.ListFile" Version="0.1.0" />
-    <PackageReference Include="Penguin.Extensions.String" Version="5.4.0" />
+    <PackageReference Include="Penguin.Extensions.String" Version="5.7.0" />
   </ItemGroup>
 </Project>
